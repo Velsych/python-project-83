@@ -1,0 +1,6 @@
+{% extends "layout.html" %} 
+{%block messages%} 
+{% if messages%}
+<div class="alert alert-success" role="alert">{{messages[0]}}</div>
+{%endif%}
+{%endblock%}

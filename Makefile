@@ -1,7 +1,7 @@
 install:
 	uv sync
 
-build:
+build_uv:
 	uv build
 
 package-install:
