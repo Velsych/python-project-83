@@ -14,13 +14,20 @@ class db_work:
             cur.execute(SQL)
             return [dict(row) for row in cur]
     
+    def name_check(self,url):
+        SQL = 'SELECT name FROM urls;'
+        with self.conn.cursor(cursor_factory=DictCursor) as cur:
+                cur.execute(SQL)
+                name_dict = cur.fetchall()
+        return False if url in name_dict else True
+    
+    
     def add_url(self, url):
-        SQL = 'INSERT INTO urls(name,created_at) VALUES(%s,%s)'
         non_normilized_url = urlparse(url)
         normilized_url = non_normilized_url.scheme + "://" + non_normilized_url.hostname
-        current_date = datetime.date.today()
-        with self.conn.cursor(cursor_factory=DictCursor) as cur:
-            cur.execute(SQL, (normilized_url, current_date))
-            self.conn.commit()
-
-
+        if not db_work.name_check(self,normilized_url):
+            SQL = 'INSERT INTO urls(name,created_at) VALUES(%s,%s)'
+            current_date = datetime.date.today()
+            with self.conn.cursor(cursor_factory=DictCursor) as cur:
+                cur.execute(SQL, (normilized_url, current_date))
+                self.conn.commit()
