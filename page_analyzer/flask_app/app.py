@@ -17,10 +17,21 @@ from page_analyzer.controller.db_controller import db_work
 load_dotenv()
 
 
+keepalive_kwargs = {
+    "keepalives": 1,
+    "keepalives_idle": 30,
+    "keepalives_interval": 5,
+    "keepalives_count": 5,
+}
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 DATABASE_URL = os.getenv('DATABASE_URL')
-conn = psycopg2.connect(DATABASE_URL)
+conn = psycopg2.connect(DATABASE_URL, **keepalive_kwargs)
+repo = db_work(conn)
+
+
 
 @app.route("/")
 def index():
@@ -30,7 +41,6 @@ def index():
 
 @app.route('/urls')
 def urls():
-    repo = db_work(conn)
     url_list = []
     messages = get_flashed_messages()
     if messages:
@@ -42,7 +52,6 @@ def urls():
 @app.post("/urls")
 def check_url():
     new_url = request.form.get('url')
-    repo = db_work(conn)
     if url(new_url):
         repo.add_url(new_url)
         flash("Запись успешно добавлена", "success")
