@@ -21,7 +21,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 DATABASE_URL = os.getenv('DATABASE_URL')
 conn = psycopg2.connect(DATABASE_URL)
-repo = db_work(conn)
 
 
 @app.route("/")
@@ -43,6 +42,7 @@ def urls():
 @app.post("/urls")
 def check_url():
     new_url = request.form.get('url')
+    repo = db_work(conn)
     if url(new_url):
         repo.add_url(new_url)
         flash("Запись успешно добавлена", "success")
