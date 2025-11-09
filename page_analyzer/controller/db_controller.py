@@ -1,6 +1,6 @@
 import datetime
 from urllib.parse import urlparse
-
+from validators import url
 from psycopg2.extras import DictCursor
 
 

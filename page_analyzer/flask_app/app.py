@@ -42,7 +42,7 @@ def urls():
 
 @app.post("/urls")
 def check_url():
-    new_url = request.args.get('url')
+    new_url = request.form.get('url')
     if url(new_url):
         repo.add_url(new_url)
         flash("Запись успешно добавлена", "success")
