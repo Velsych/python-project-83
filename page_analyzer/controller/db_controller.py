@@ -12,34 +12,35 @@ keepalive_kwargs = {
 }
 
 DATABASE_URL = os.getenv('DATABASE_URL')
-conn = psycopg2.connect(DATABASE_URL, **keepalive_kwargs)
+def db_connect():
+    return psycopg2.connect(DATABASE_URL, **keepalive_kwargs)
 
 
 class db_work:
     
     def get_all(self):
-        con = conn 
+        con = db_connect()
         SQL = 'SELECT * FROM urls ORDER BY id DESC;'
-        with self.con.cursor(cursor_factory=DictCursor) as cur:
+        with con.cursor(cursor_factory=DictCursor) as cur:
             cur.execute(SQL)
             return [dict(row) for row in cur]
     
     def name_check(self,url):
-        con = conn 
+        con = db_connect()
         SQL = 'SELECT name FROM urls;'
-        with self.con.cursor(cursor_factory=DictCursor) as cur:
+        with con.cursor(cursor_factory=DictCursor) as cur:
                 cur.execute(SQL)
                 name_dict = cur.fetchall()
         return False if url in name_dict else True
     
     
     def add_url(self, url):
-        con = conn 
+        con = db_connect()
         non_normilized_url = urlparse(url)
         normilized_url = non_normilized_url.scheme + "://" + non_normilized_url.hostname
         if not db_work.name_check(self,normilized_url):
             SQL = 'INSERT INTO urls(name,created_at) VALUES(%s,%s)'
             current_date = datetime.date.today()
-            with self.con.cursor(cursor_factory=DictCursor) as cur:
+            with con.cursor(cursor_factory=DictCursor) as cur:
                 cur.execute(SQL, (normilized_url, current_date))
-                self.con.commit()
+                con.commit()
