@@ -1,5 +1,7 @@
-CREATE TABLE urls(
+CREATE TABLE IF NOT EXISTS urls(
     id BIGINT GENERATED ALWAYS AS IDENTITY,
     name VARCHAR(255),
     created_at DATE
 );
+
+DELETE FROM urls WHERE id = 2;

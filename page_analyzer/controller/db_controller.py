@@ -33,7 +33,22 @@ class db_work:
                 name_dict = cur.fetchall()
         return False if url in name_dict else True
     
+    def get_one(self,id):
+        con = db_connect()
+        SQL = "SELECT * FROM urls where id = %s;"
+        with con.cursor(cursor_factory=DictCursor) as cur:
+                cur.execute(SQL,id)
+                result  = cur.fetchone()
+                return dict(result)
     
+    def get_last_id(self):
+        con = db_connect()
+        SQL = "SELECT id FROM urls ORDER BY id DESC"
+        with con.cursor(cursor_factory=DictCursor) as cur:
+                cur.execute(SQL,id)
+                result  = cur.fetchone()
+                return dict(result)
+        
     def add_url(self, url):
         con = db_connect()
         non_normilized_url = urlparse(url)

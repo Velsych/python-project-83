@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
-
+{%block messages%} 
+{% if messages%}
+<div class="alert alert-danger" role="alert">{{messages[0]}}</div>
+{%endif%}
+{%endblock%}
 {% block main %}
 <div class="container-lg mt-3">
       <h1>Сайты</h1>
@@ -20,7 +24,7 @@
         {% for row in all_rows %}
       <tr>
       <td>{{row['id']}}</td>
-      <td>{{row['name']}}</td>
+      <td><a href="{{url_for('detail_url', id = row['id'])}}">{{row['name']}}</a></td>
       <td>{{row['created_at']}}</td>
       <td>4</td>
       </tr>
