@@ -45,17 +45,31 @@ class db_work:
         con = db_connect()
         SQL = "SELECT id FROM urls ORDER BY id DESC"
         with con.cursor(cursor_factory=DictCursor) as cur:
-                cur.execute(SQL,id)
+                cur.execute(SQL,(id,))
                 result  = cur.fetchone()
                 return dict(result)
         
-    def add_url(self, url):
+    def add_url(self, normilized_url):
         con = db_connect()
-        non_normilized_url = urlparse(url)
-        normilized_url = non_normilized_url.scheme + "://" + non_normilized_url.hostname
-        if not db_work.name_check(self,normilized_url):
-            SQL = 'INSERT INTO urls(name,created_at) VALUES(%s,%s)'
-            current_date = datetime.date.today()
-            with con.cursor(cursor_factory=DictCursor) as cur:
-                cur.execute(SQL, (normilized_url, current_date))
-                con.commit()
+        SQL = 'INSERT INTO urls(name,created_at) VALUES(%s,%s)'
+        current_date = datetime.date.today()
+        with con.cursor(cursor_factory=DictCursor) as cur:
+            cur.execute(SQL, (normilized_url, current_date))
+            con.commit()
+
+    def get_by_name(self, name):
+        con = db_connect()
+        SQL = "SELECT * FROM urls where name = %s ;"
+        with con.cursor(cursor_factory=DictCursor) as cur:
+                print(name)
+                cur.execute(SQL, (name,))
+                result  = cur.fetchone()
+                return dict(result)
+        
+
+def validator(new_url):
+    if not url(new_url):
+        return False
+    non_normilized_url = urlparse(new_url)
+    normilized_url = non_normilized_url.scheme + "://" + non_normilized_url.hostname
+    return normilized_url

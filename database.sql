@@ -3,5 +3,3 @@ CREATE TABLE IF NOT EXISTS urls(
     name VARCHAR(255),
     created_at DATE
 );
-
-DELETE FROM urls WHERE id = 2;
