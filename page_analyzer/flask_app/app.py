@@ -89,7 +89,7 @@ def check_url(id):
         status = res.status_code
         res.raise_for_status()
     except requests.exceptions.RequestException:
-        flash('Что-то пошло не так','fail')
+        flash('Произошла ошибка при проверке','fail')
         return redirect(url_for('detail_url',id = id))
     else:
         repo.add_url_check(id,status)

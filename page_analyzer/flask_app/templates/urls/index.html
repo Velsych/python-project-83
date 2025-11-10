@@ -20,8 +20,8 @@
       <tr>
       <td>{{row['id']}}</td>
       <td><a href="{{url_for('detail_url', id = row['id'])}}">{{row['name']}}</a></td>
-      <td>{{row['created_at']}}</td>
-      <td>{{ row['status_code']}}</td>
+      <td>{{row['created_at'] | default('',True)}}</td>
+      <td>{{ row['status_code'] | default('',True)}}</td>
       </tr>
         {%endfor%}
         {% endif %}

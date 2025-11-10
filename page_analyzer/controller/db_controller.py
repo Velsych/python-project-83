@@ -30,7 +30,7 @@ class db_work:
     
     def get_all(self):
         con = db_connect()
-        SQL = 'SELECT DISTINCT urls.id,urls.name, url_checks.created_at,status_code FROM urls INNER JOIN url_checks on urls.id = url_id WHERE url_checks.created_at = (SELECT MAX(created_at) FROM url_checks AS uc WHERE uc.url_id = urls.id)  ORDER BY id DESC;'
+        SQL = 'SELECT DISTINCT urls.id,urls.name, url_checks.created_at,url_checks.status_code FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id AND url_checks.created_at = (SELECT MAX(created_at) FROM url_checks AS uc WHERE uc.url_id = urls.id)ORDER BY urls.id DESC;'
         with con.cursor(cursor_factory=DictCursor) as cur:
             cur.execute(SQL)
             return [dict(row) for row in cur]
