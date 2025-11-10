@@ -21,7 +21,7 @@
       <td>{{row['id']}}</td>
       <td><a href="{{url_for('detail_url', id = row['id'])}}">{{row['name']}}</a></td>
       <td>{{row['created_at']}}</td>
-      <td>4</td>
+      <td>{{ row['status_code']}}</td>
       </tr>
         {%endfor%}
         {% endif %}

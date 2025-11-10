@@ -1,6 +1,4 @@
 import os
-from urllib.parse import urlparse
-import psycopg2
 from dotenv import load_dotenv
 from flask import (
     Flask,
@@ -11,6 +9,7 @@ from flask import (
     request,
     url_for
 )
+import requests 
 from validators import url
 
 from page_analyzer.controller.db_controller import db_work,validator
@@ -84,5 +83,14 @@ def detail_url(id):
 
 @app.post('/urls/<id>/checks')
 def check_url(id):
-    repo.add_url_check(id)
-    return redirect(url_for('detail_url',id = id))
+    url = repo.get_by_id(id)
+    try:
+        res = requests.get(url['name'])
+        status = res.status_code
+        res.raise_for_status()
+    except requests.exceptions.RequestException:
+        flash('Что-то пошло не так','fail')
+        return redirect(url_for('detail_url',id = id))
+    else:
+        repo.add_url_check(id,status)
+        return redirect(url_for('detail_url',id = id))

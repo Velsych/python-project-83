@@ -30,7 +30,7 @@ class db_work:
     
     def get_all(self):
         con = db_connect()
-        SQL = 'SELECT * FROM urls ORDER BY id DESC;'
+        SQL = 'SELECT DISTINCT urls.id,urls.name, url_checks.created_at,status_code FROM urls INNER JOIN url_checks on urls.id = url_id WHERE url_checks.created_at = (SELECT MAX(created_at) FROM url_checks AS uc WHERE uc.url_id = urls.id)  ORDER BY id DESC;'
         with con.cursor(cursor_factory=DictCursor) as cur:
             cur.execute(SQL)
             return [dict(row) for row in cur]
@@ -70,12 +70,12 @@ class db_work:
     
 
 
-    def add_url_check(self,url_id):
+    def add_url_check(self,url_id,status):
         con = db_connect()
-        SQL ='INSERT INTO url_checks(url_id,created_at) VALUES(%s,%s)'
+        SQL ='INSERT INTO url_checks(url_id,created_at,status_code) VALUES(%s,%s,%s)'
         current_date = datetime.date.today()
         with con.cursor(cursor_factory=DictCursor) as cur:
-            cur.execute(SQL, (url_id, current_date))
+            cur.execute(SQL, (url_id, current_date,status))
             con.commit()
 
 
@@ -95,3 +95,10 @@ class db_work:
                 cur.execute(SQL,(id,))
                 return [dict(row) for row in cur]
 
+
+
+
+
+
+# r = requests.get('https://requests.readthedocs.io/en/latest/user/install/#install') # СОЗДАЁТ ОБЪЕКТ РЕСПОНС С КОТОРОГО МОЖНО ВЫТАСКИВАТЬ ГОВНО УРА
+# print(type(r.text))  #ЭТА ХУЙНЯ ВОЗВРАЩАЕТ ХТМЛ УРА БЛЯТЬ
