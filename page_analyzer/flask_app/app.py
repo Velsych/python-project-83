@@ -50,14 +50,14 @@ def urls():
 
 
 @app.post("/urls")
-def check_url():
+def post_url():
     new_url = request.form.get('url')
     valid = validator(new_url)
     if not valid:
         app.logger.info("Пароль неверный, выполняю перенаправление на /")
         flash("Неверный юрл!", "fail")
         return redirect('/')
-    elif repo.name_check(valid):
+    if repo.name_check(valid):
         repo.add_url(valid)
         flash("Запись успешно добавлена", "success")
         app.logger.info("Запись добавлена, выполняется редирект")
@@ -73,9 +73,16 @@ def check_url():
 
 @app.route('/urls/<id>')
 def detail_url(id):
-    url = repo.get_one(id)
+    url = repo.get_by_id(id)
     messages = get_flashed_messages()
+    checks = repo.get_url_cheks(id)
     if messages:
         app.logger.info("Есть flash сообщение")
-    return render_template("urls/id.html",url=url,messages = messages)
-    
+    return render_template("urls/id.html",url=url,messages = messages,url_checks = checks)
+
+
+
+@app.post('/urls/<id>/checks')
+def check_url(id):
+    repo.add_url_check(id)
+    return redirect(url_for('detail_url',id = id))

@@ -1,5 +1,15 @@
+DROP TABLE urls;
 CREATE TABLE IF NOT EXISTS urls(
     id BIGINT GENERATED ALWAYS AS IDENTITY,
     name VARCHAR(255),
+    created_at DATE
+);
+CREATE TABLE IF NOT EXISTS url_checks(
+    id BIGINT GENERATED ALWAYS AS IDENTITY,
+    url_id REFERENCES urls(id),
+    status_code TINYINT,
+    h1 VARCHAR(255),
+    title VARCHAR(255),
+    description VARCHAR(255),
     created_at DATE
 );

@@ -31,7 +31,7 @@
   </div>
 
     <h2 class="mt-5 mb-3">Проверки</h2>
-    <form method="post" action="/urls/1/checks">
+    <form method="post" action="/urls/{{url['id']}}/checks">
     <input type="submit" class="btn btn-primary" value="Запустить проверку">
     </form>
     
@@ -49,15 +49,16 @@
     </thead>
       <tbody>
     
+    {% for row in url_checks %}
     <tr>
-        <td>1</td>
+        <td>{{row['id']}}</td>
         <td>200</td>
         <td>validators¶</td>
         <td>validators — validators 0.11.2 documentation</td>
         <td></td>
-        <td>2025-11-10</td>
+        <td>{{row['created_at']}}</td>
     </tr>
-    
+    {% endfor %}
     </tbody>
     </table>
   </div>

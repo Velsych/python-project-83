@@ -4,6 +4,7 @@ from validators import url
 import psycopg2
 from psycopg2.extras import DictCursor
 import os
+from itertools import chain
 keepalive_kwargs = {
     "keepalives": 1,
     "keepalives_idle": 30,
@@ -14,6 +15,15 @@ keepalive_kwargs = {
 DATABASE_URL = os.getenv('DATABASE_URL')
 def db_connect():
     return psycopg2.connect(DATABASE_URL, **keepalive_kwargs)
+
+
+def validator(new_url):
+    if not url(new_url):
+        return False
+    non_normilized_url = urlparse(new_url)
+    normilized_url = non_normilized_url.scheme + "://" + non_normilized_url.hostname
+    return normilized_url
+
 
 
 class db_work:
@@ -29,15 +39,16 @@ class db_work:
         con = db_connect()
         SQL = 'SELECT name FROM urls;'
         with con.cursor(cursor_factory=DictCursor) as cur:
-                cur.execute(SQL)
-                name_dict = cur.fetchall()
-        return False if url in name_dict else True
+            cur.execute(SQL)
+            name_dict = cur.fetchall()
+        return False if url in list(chain.from_iterable(name_dict)) else True
+        
     
-    def get_one(self,id):
+    def get_by_id(self,id):
         con = db_connect()
         SQL = "SELECT * FROM urls where id = %s;"
         with con.cursor(cursor_factory=DictCursor) as cur:
-                cur.execute(SQL,id)
+                cur.execute(SQL,(id,))
                 result  = cur.fetchone()
                 return dict(result)
     
@@ -56,6 +67,17 @@ class db_work:
         with con.cursor(cursor_factory=DictCursor) as cur:
             cur.execute(SQL, (normilized_url, current_date))
             con.commit()
+    
+
+
+    def add_url_check(self,url_id):
+        con = db_connect()
+        SQL ='INSERT INTO url_checks(url_id,created_at) VALUES(%s,%s)'
+        current_date = datetime.date.today()
+        with con.cursor(cursor_factory=DictCursor) as cur:
+            cur.execute(SQL, (url_id, current_date))
+            con.commit()
+
 
     def get_by_name(self, name):
         con = db_connect()
@@ -65,11 +87,11 @@ class db_work:
                 cur.execute(SQL, (name,))
                 result  = cur.fetchone()
                 return dict(result)
-        
+    
+    def get_url_cheks(id):
+        con = db_connect()
+        SQL = "SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC"
+        with con.cursor(cursor_factory=DictCursor) as cur:
+                cur.execute(SQL,(id,))
+                return [dict(row) for row in cur]
 
-def validator(new_url):
-    if not url(new_url):
-        return False
-    non_normilized_url = urlparse(new_url)
-    normilized_url = non_normilized_url.scheme + "://" + non_normilized_url.hostname
-    return normilized_url
