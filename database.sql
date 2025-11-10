@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS urls(
 CREATE TABLE IF NOT EXISTS url_checks(
     id BIGINT GENERATED ALWAYS AS IDENTITY,
     url_id BIGINT REFERENCES urls(id),
-    status_code TINYINT,
+    status_code SMALLINT,
     h1 VARCHAR(255),
     title VARCHAR(255),
     description VARCHAR(255),
