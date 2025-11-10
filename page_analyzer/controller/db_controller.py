@@ -88,7 +88,7 @@ class db_work:
                 result  = cur.fetchone()
                 return dict(result)
     
-    def get_url_cheks(id):
+    def get_url_cheks(self,id):
         con = db_connect()
         SQL = "SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC"
         with con.cursor(cursor_factory=DictCursor) as cur:
