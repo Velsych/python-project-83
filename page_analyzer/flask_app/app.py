@@ -54,7 +54,7 @@ def post_url():
         app.logger.info("Неверный юрл.")
         flash("Некорректный URL", "fail")
         messages = get_flashed_messages()
-        return render_template('index.html', messages=messages),422
+        return render_template('index.html', messages=messages), 422
     if repo.name_check(valid_url):
         current_date = datetime.date.today()
         repo.add_url(valid_url, current_date)
