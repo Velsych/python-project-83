@@ -16,13 +16,14 @@
 Alsy again here, now with web development! I gladly can present u my hard work on this package. ＼(￣▽￣)／
 
 # Demo url:
-    https://python-project-83-dwg8.onrender.com/
+
+https://python-project-83-dwg8.onrender.com/
 
 <ins>Can take a while, while host booting</ins>
 
 
 ### __**What that thing can do?**__
-    Basically it can make simple request to a website and render its status code, titles and site description. Very simple UI :Р.
+Basically it can make simple request to a website and render its status code, titles and site description. Very simple UI :Р.
 
 
 ### **How to install**
