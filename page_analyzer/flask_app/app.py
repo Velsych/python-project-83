@@ -70,10 +70,10 @@ def post_url():
 @app.route('/urls/<id>')
 def detail_url(id):
     url = repo.get_by_id(id)
-    if messages:
-        app.logger.info("Есть flash сообщение")
     messages = get_flashed_messages(with_categories=True)
     checks = repo.get_url_checks(id)
+    if messages:
+        app.logger.info("Есть flash сообщение")
     return render_template("urls/id.html",url=url,messages = messages,url_checks = checks)
 
 
