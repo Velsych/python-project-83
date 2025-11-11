@@ -1,7 +1,14 @@
 {% extends "layout.html" %} 
 {%block messages%} 
 {% if messages%}
-<div class="alert alert-success" role="alert">{{messages[0]}}</div>
+{%for class,message in messages %}
+{% if class == 'fail'%}
+<div class="alert alert-danger" role="alert">{{message}}</div>
+{%else%}
+<div class="alert alert-success" role="alert">{{message}}</div>
+{%endif%}
+
+{% endfor %}
 {%endif%}
 {%endblock%}
 
@@ -53,9 +60,9 @@
     <tr>
         <td>{{row['id']}}</td>
         <td>{{row['status_code']}}</td>
-        <td>validators¶</td>
-        <td>validators — validators 0.11.2 documentation</td>
-        <td></td>
+        <td>{{row['h1']}}</td>
+        <td>{{row['title']}}</td>
+        <td>{{row['description']}}</td>
         <td>{{row['created_at']}}</td>
     </tr>
     {% endfor %}

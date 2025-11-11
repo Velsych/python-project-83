@@ -10,25 +10,21 @@ from flask import (
     url_for
 )
 import requests 
-from validators import url
-
-from page_analyzer.controller.db_controller import db_work,validator
+import datetime
+from page_analyzer.controller.db_controller import DbManager,UrlRepository
+from page_analyzer.controller.validators import validator,html_parser
 
 load_dotenv()
 
 
-keepalive_kwargs = {
-    "keepalives": 1,
-    "keepalives_idle": 30,
-    "keepalives_interval": 5,
-    "keepalives_count": 5,
-}
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
-repo = db_work()
+db_manager = DbManager(DATABASE_URL)
+repo = UrlRepository(db_manager)
 
 
 
@@ -51,19 +47,20 @@ def urls():
 @app.post("/urls")
 def post_url():
     new_url = request.form.get('url')
-    valid = validator(new_url)
-    if not valid:
-        app.logger.info("Пароль неверный, выполняю перенаправление на /")
-        flash("Неверный юрл!", "fail")
+    valid_url = validator(new_url)
+    if not valid_url:
+        app.logger.info("Неверный юрл.")
+        flash("Неверный url!", "fail")
         return redirect('/')
-    if repo.name_check(valid):
-        repo.add_url(valid)
+    if repo.name_check(valid_url):
+        current_date = datetime.date.today()
+        repo.add_url(valid_url,current_date)
         flash("Запись успешно добавлена", "success")
         app.logger.info("Запись добавлена, выполняется редирект")
         result = repo.get_last_id()
         return redirect(url_for("detail_url", id = result['id']))
     else:
-        result = repo.get_by_name(str(valid))
+        result = repo.get_by_name(valid_url)
         flash("Запись уже существует", "success")
         return redirect(url_for("detail_url", id = result['id']))
             
@@ -73,24 +70,31 @@ def post_url():
 @app.route('/urls/<id>')
 def detail_url(id):
     url = repo.get_by_id(id)
-    messages = get_flashed_messages()
-    checks = repo.get_url_cheks(id)
     if messages:
         app.logger.info("Есть flash сообщение")
+    messages = get_flashed_messages(with_categories=True)
+    checks = repo.get_url_checks(id)
     return render_template("urls/id.html",url=url,messages = messages,url_checks = checks)
 
 
 
 @app.post('/urls/<id>/checks')
 def check_url(id):
-    url = repo.get_by_id(id)
+    url_id = repo.get_by_id(id)
+    current_date = datetime.date.today()
     try:
-        res = requests.get(url['name'])
+        res = requests.get(url_id['name'],timeout=5.000)
         status = res.status_code
+        html = res.text
+        h1,title,description = html_parser(html)
         res.raise_for_status()
     except requests.exceptions.RequestException:
         flash('Произошла ошибка при проверке','fail')
         return redirect(url_for('detail_url',id = id))
+    except requests.exceptions.Timeout:
+        flash('Произошла ошибка при проверке','fail')
+        return redirect(url_for('detail_url',id = id))
     else:
-        repo.add_url_check(id,status)
+        repo.add_url_check(id,current_date,status,h1,title,description)
+        flash('Запись успешно добавлена','success')
         return redirect(url_for('detail_url',id = id))

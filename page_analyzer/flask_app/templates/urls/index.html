@@ -1,33 +1,33 @@
 {% extends "layout.html" %}
 {% block main %}
-<div class="container-lg mt-3">
-      <h1>Сайты</h1>
-
-    
-<div class="table-responsive">
-  <table class="table table-bordered table-hover text-nowrap" data-test="urls">
-    <thead>
-    <tr>
-      <th>ID</th>
-      <th>Имя</th>
-      <th>Последняя проверка</th>
-      <th>Код ответа</th>
-    </tr>
-    </thead>
-    <tbody>
-        {% if all_rows %}
-        {% for row in all_rows %}
+<main class=" flex-grow-1">
+  <div class="container-lg mt-3">
+        <h1>Сайты</h1>    
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover text-nowrap" data-test="urls">
+      <thead>
       <tr>
-      <td>{{row['id']}}</td>
-      <td><a href="{{url_for('detail_url', id = row['id'])}}">{{row['name']}}</a></td>
-      <td>{{row['created_at'] | default('',True)}}</td>
-      <td>{{ row['status_code'] | default('',True)}}</td>
+        <th>ID</th>
+        <th>Имя</th>
+        <th>Последняя проверка</th>
+        <th>Код ответа</th>
       </tr>
-        {%endfor%}
-        {% endif %}
-    </tbody>
-  </table>
-</div>
+      </thead>
+      <tbody>
+          {% if all_rows %}
+          {% for row in all_rows %}
+        <tr>
+        <td>{{row['id']}}</td>
+        <td><a href="{{url_for('detail_url', id = row['id'])}}">{{row['name']}}</a></td>
+        <td>{{row['created_at'] | default('',True)}}</td>
+        <td>{{ row['status_code'] | default('',True)}}</td>
+        </tr>
+          {%endfor%}
+          {% endif %}
+      </tbody>
+    </table>
+  </div>
 
-    </div>
+      </div>
+</main>
 {% endblock %}
