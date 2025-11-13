@@ -57,8 +57,9 @@ class UrlRepository:
     def check_name_in_db(self, url):
         SQL = 'SELECT id,name FROM urls WHERE name = %s;'
         name = self.db_manager.fetchone(SQL, (url,))
-        if name['name'] == "":
-            return name['id'], True
+        print(name)
+        if name is None:
+            return False, True
         else:
             return name['id'], False
     
