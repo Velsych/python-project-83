@@ -13,8 +13,10 @@ from flask import (
     url_for,
 )
 
-from page_analyzer.controller.db_controller import DbManager, UrlRepository
-from page_analyzer.controller.validators import html_parser, validator
+from page_analyzer.core.url_repo import  UrlRepository
+from page_analyzer.core.validators import  validator
+from page_analyzer.core.db import DbManager
+from page_analyzer.core.html_parser import html_parser
 
 load_dotenv()
 
@@ -55,7 +57,8 @@ def post_url():
         flash("Некорректный URL", "fail")
         messages = get_flashed_messages()
         return render_template('index.html', messages=messages), 422
-    if repo.name_check(valid_url):
+    url_id,name_exist = repo.check_name_in_db(valid_url)
+    if name_exist:
         current_date = datetime.date.today()
         repo.add_url(valid_url, current_date)
         flash("Страница успешно добавлена", "success")
@@ -65,7 +68,7 @@ def post_url():
     else:
         result = repo.get_by_name(valid_url)
         flash("Страница уже существует", "success")
-        return redirect(url_for("detail_url", id=result['id']))
+        return redirect(url_for("detail_url", id=url_id))
             
 
 @app.route('/urls/<id>')

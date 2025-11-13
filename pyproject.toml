@@ -1,7 +1,8 @@
 [project]
 name = "hexlet-code"
 version = "0.1.0"
-description = "Add your description here"
+description = "package to easy create and deploy ur web app"
+authors = [{name = "Alsy", email="velsych@mail.ru"}]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
