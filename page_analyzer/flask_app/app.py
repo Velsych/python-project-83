@@ -13,10 +13,10 @@ from flask import (
     url_for,
 )
 
-from page_analyzer.core.url_repo import  UrlRepository
-from page_analyzer.core.validators import  validator
 from page_analyzer.core.db import DbManager
 from page_analyzer.core.html_parser import html_parser
+from page_analyzer.core.url_repo import UrlRepository
+from page_analyzer.core.validators import validator
 
 load_dotenv()
 
@@ -57,7 +57,7 @@ def post_url():
         flash("Некорректный URL", "fail")
         messages = get_flashed_messages()
         return render_template('index.html', messages=messages), 422
-    url_id,name_exist = repo.check_name_in_db(valid_url)
+    url_id, name_exist = repo.check_name_in_db(valid_url)
     if name_exist:
         current_date = datetime.date.today()
         repo.add_url(valid_url, current_date)

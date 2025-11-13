@@ -2,7 +2,6 @@ import psycopg2
 from psycopg2.extras import DictCursor
 
 
-
 class DbManager:
     def __init__(self, db_url):
         self.url = db_url

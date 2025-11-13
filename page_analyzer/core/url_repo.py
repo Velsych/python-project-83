@@ -1,8 +1,3 @@
-from itertools import chain
-
-
-
-
 
 
 class UrlRepository:
@@ -61,11 +56,11 @@ class UrlRepository:
 
     def check_name_in_db(self, url):
         SQL = 'SELECT id,name FROM urls WHERE name = %s;'
-        name = self.db_manager.fetchone(SQL,(url,))
-        if name['name'] == None:
-            return name['id'],True
+        name = self.db_manager.fetchone(SQL, (url,))
+        if name['name'] is None:
+            return name['id'], True
         else:
-            return name['id'],False
+            return name['id'], False
     
 
 
